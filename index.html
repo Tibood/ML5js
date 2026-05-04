@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Jetpack Runner — IA Neuro-évolutive</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <div id="app">
+
+        <!-- Zone de jeu -->
+        <div id="game-area">
+            <h1>Jetpack Runner</h1>
+            <div id="canvas-container"></div>
+        </div>
+
+        <!-- Panneau de configuration IA -->
+        <aside id="control-panel">
+            <h2>Contrôles IA</h2>
+
+            <section class="panel-section">
+                <h3>Mode</h3>
+                <div class="btn-group">
+                    <button id="btn-play">Jouer</button>
+                    <button id="btn-train">Entraîner</button>
+                    <button id="btn-demo">Démo</button>
+                    <button id="btn-compete">Compétition</button>
+                </div>
+            </section>
+
+            <section class="panel-section">
+                <h3>Configuration réseau</h3>
+
+                <label>Population &nbsp;<span id="val-pop">50</span></label>
+                <input type="range" id="sl-pop" min="10" max="200" value="50" step="10">
+
+                <label>Entrées capteurs &nbsp;<span id="val-inputs">6</span></label>
+                <input type="range" id="sl-inputs" min="2" max="8" value="6" step="1">
+
+                <label>Neurones couche cachée &nbsp;<span id="val-neurons">8</span></label>
+                <input type="range" id="sl-neurons" min="4" max="32" value="8" step="2">
+
+                <label>Taux de mutation &nbsp;<span id="val-mutation">10</span>%</label>
+                <input type="range" id="sl-mutation" min="1" max="50" value="10" step="1">
+
+                <label>Condition d'arrêt — fitness ≥ <span id="val-stop">2000</span></label>
+                <input type="range" id="sl-stop" min="500" max="15000" value="2000" step="500">
+
+                <div class="btn-group" style="margin-top:10px">
+                    <button id="btn-start-train">▶ Lancer</button>
+                    <button id="btn-reset-train">↺ Reset</button>
+                </div>
+            </section>
+
+            <section class="panel-section">
+                <h3>Statistiques</h3>
+                <div id="stats">
+                    <div>Génération <strong id="stat-gen">0</strong></div>
+                    <div>Vivants <strong id="stat-alive">0</strong></div>
+                    <div>Fitness actuelle <strong id="stat-cur-best">0</strong></div>
+                    <div>Meilleur global <strong id="stat-best">0</strong></div>
+                    <div>Fitness moy. <strong id="stat-avg">0</strong></div>
+                    <div>Condition arrêt <strong id="stat-stop-pct">0%</strong></div>
+                </div>
+            </section>
+
+            <section class="panel-section">
+                <h3>Cerveaux sauvegardés</h3>
+                <button id="btn-save-brain">💾 Sauvegarder le meilleur</button>
+                <p class="hint">☑ = inclure dans la compétition &nbsp;▶ = lancer en démo</p>
+                <div id="brains-list"></div>
+            </section>
+
+            <section class="panel-section">
+                <h3>Fonction de fitness</h3>
+                <p><em>fitness = frames_franchies + obstacles_franchis × 150</em></p>
+                <p>Les obstacles récompensent la progression active ; les frames
+                    valorisent la longévité. Ce mélange évite qu'un agent reste immobile.</p>
+            </section>
+        </aside>
+    </div>
+
+    <!-- p5.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.2/p5.min.js"></script>
+    <!-- ML5.js v1 (inclut TF.js) -->
+    <script src="https://unpkg.com/ml5@1/dist/ml5.min.js"></script>
+    <!-- Forcer le backend WebGL : ML5 enregistre WebGPU (async) comme priorité max,
+         ce qui provoque une erreur si on essaie de créer des tenseurs avant son init. -->
+    <script>
+        window.tf = ml5.tf;
+        try { tf.removeBackend('webgpu'); } catch (e) { }
+        tf.setBackend('webgl');
+    </script>
+
+    <!-- Modules du jeu (ordre de chargement important) -->
+    <script src="nn.js"></script>
+    <script src="background.js"></script>
+    <script src="player.js"></script>
+    <script src="obstacle.js"></script>
+    <script src="agent.js"></script>
+    <script src="evolution.js"></script>
+    <script src="hud.js"></script>
+    <script src="ui.js"></script>
+    <script src="sketch.js"></script>
+</body>
+
+</html>

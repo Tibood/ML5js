@@ -1,0 +1,229 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #1a1a2e;
+    font-family: Arial, sans-serif;
+    color: #eee;
+    min-height: 100vh;
+}
+
+#app {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 18px;
+    padding: 18px;
+}
+
+#game-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+#game-area h1 {
+    margin-bottom: 10px;
+    font-size: 1.3rem;
+    color: #a8dadc;
+}
+
+canvas {
+    border: 2px solid #a8dadc;
+    border-radius: 8px;
+    display: block;
+}
+
+/* ── Panneau latéral ─────────────────────────────────────────────────── */
+
+#control-panel {
+    width: 265px;
+    background: #16213e;
+    border: 1px solid #2d3561;
+    border-radius: 10px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    max-height: calc(100vh - 36px);
+    overflow-y: auto;
+}
+
+#control-panel h2 {
+    font-size: 1rem;
+    color: #a8dadc;
+    margin-bottom: 10px;
+    text-align: center;
+    letter-spacing: 0.04em;
+}
+
+.panel-section {
+    border-top: 1px solid #2d3561;
+    padding: 10px 0 6px;
+}
+
+.panel-section h3 {
+    font-size: 0.75rem;
+    color: #a8dadc;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+}
+
+.panel-section p {
+    font-size: 0.74rem;
+    color: #aaa;
+    line-height: 1.4;
+    margin-bottom: 3px;
+}
+
+.panel-section p em {
+    color: #e9c46a;
+    font-style: normal;
+}
+
+.hint {
+    font-size: 0.7rem !important;
+    color: #778 !important;
+    margin: 4px 0 6px;
+}
+
+label {
+    display: block;
+    font-size: 0.77rem;
+    color: #ccc;
+    margin-top: 7px;
+    margin-bottom: 2px;
+}
+
+label span {
+    color: #e9c46a;
+    font-weight: bold;
+}
+
+input[type="range"] {
+    width: 100%;
+    accent-color: #a8dadc;
+    cursor: pointer;
+    height: 4px;
+}
+
+select {
+    width: 100%;
+    background: #0f3460;
+    color: #eee;
+    border: 1px solid #2d3561;
+    border-radius: 4px;
+    padding: 4px 6px;
+    font-size: 0.82rem;
+    margin-top: 4px;
+    cursor: pointer;
+}
+
+button {
+    width: 100%;
+    padding: 6px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    margin-top: 5px;
+    background: #0f3460;
+    color: #eee;
+    transition: background 0.15s;
+}
+
+button:hover {
+    background: #1a5276;
+}
+
+button.active {
+    background: #a8dadc;
+    color: #1a1a2e;
+    font-weight: bold;
+}
+
+.btn-group {
+    display: flex;
+    gap: 5px;
+}
+
+.btn-group button {
+    flex: 1;
+    margin-top: 0;
+    font-size: 0.72rem;
+    padding: 5px 3px;
+}
+
+/* ── Statistiques ─ */
+
+#stats {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 1px 8px;
+    font-size: 0.78rem;
+}
+
+#stats div {
+    display: contents;
+}
+
+#stats strong {
+    color: #e9c46a;
+    text-align: right;
+}
+
+/* ── Liste des cerveaux ─ */
+
+#brains-list {
+    margin-top: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    max-height: 180px;
+    overflow-y: auto;
+}
+
+.brain-item {
+    background: #0f3460;
+    border-radius: 5px;
+    padding: 4px 6px;
+    font-size: 0.73rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.brain-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.brain-label {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #ccc;
+}
+
+.brain-item input[type="checkbox"] {
+    width: auto;
+    cursor: pointer;
+    accent-color: #a8dadc;
+}
+
+.brain-item button {
+    width: auto;
+    padding: 2px 6px;
+    font-size: 0.68rem;
+    margin-top: 0;
+    flex-shrink: 0;
+}
