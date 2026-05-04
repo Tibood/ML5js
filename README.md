@@ -82,7 +82,7 @@ Lance une population d'agents IA qui apprennent à jouer par évolution.
 Observe **un seul cerveau** jouer en boucle.
 
 **Sources possibles du cerveau :**
-- Le meilleur issu de l'entraînement en cours
+- Le meilleur issu de l'entraînement en cours.
 - Un cerveau chargé depuis la liste des sauvegardes (cliquer **▶** à côté d'un cerveau)
 
 Le HUD affiche le score et la vitesse en temps réel. Quand l'agent meurt, l'écran
