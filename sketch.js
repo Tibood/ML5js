@@ -19,6 +19,7 @@ const MAX_VY = -9;
 let player, obstacles, particles;
 let score, speed, spawnCD, state;
 let bgStars = [], bgBuilds = [];
+let canvasFocused = false;
 
 // ── Modes & objets IA ────────────────────────────────────────────────────────
 let mode = 'title';
@@ -33,6 +34,13 @@ let competeAgents = [];
 function setup() {
     const cnv = createCanvas(W, H);
     cnv.parent('canvas-container');
+    // Rendre le canvas focusable et gérer le focus
+    const el = cnv.elt;
+    el.setAttribute('tabindex', '0');
+    el.style.outline = 'none';
+    el.addEventListener('mousedown', () => { el.focus(); canvasFocused = true; });
+    el.addEventListener('focus', () => { canvasFocused = true; });
+    el.addEventListener('blur', () => { canvasFocused = false; });
     textFont('monospace');
     initBg();
     initUI();
@@ -87,7 +95,7 @@ function drawTitle() {
 
 function drawPlayFrame() {
     if (state === 'over') { drawGameOver(); return; }
-    const thrust = keyIsDown(32) || mouseIsPressed;
+    const thrust = canvasFocused && (keyIsDown(32) || mouseIsPressed);
     updateBg();
     updatePlayer(thrust);
     if (state === 'over') return;
@@ -120,6 +128,7 @@ function drawTrainFrame() {
         if (evolution.shouldStop(uiConfig)) {
             trainingActive = false;
             demoBrain = evolution.bestBrain ? evolution.bestBrain.copy() : null;
+            saveBestBrain(true); // sauvegarde automatique
         }
         evolution.nextGeneration(uiConfig);
         _resetShared();
@@ -131,16 +140,12 @@ function drawTrainFrame() {
     score++;
     speed = 4 + score * 0.0022;
 
-    // ── Un seul tf.tidy() pour tous les agents du frame ──────────────────────
-    tf.tidy(() => {
-        for (const a of evolution.agents) {
-            if (!a.alive) continue;
-            const sensors = a.getSensors(uiConfig.inputCount);
-            const t = tf.tensor2d([sensors]);
-            const raw = Array.from(a.brain._model.predict(t).dataSync());
-            a.applyOutput(raw[0]);
-        }
-    });
+    // ── Inférence rapide JS pour tous les agents (zéro tensor, zéro dataSync) ─
+    for (const a of evolution.agents) {
+        if (!a.alive) continue;
+        const sensors = a.getSensors(uiConfig.inputCount);
+        a.applyOutput(a.brain.predictFast(sensors));
+    }
 
     let bestAgent = null, bestFit = -1;
     for (const a of evolution.agents) {
@@ -278,10 +283,9 @@ function _startCompete() {
 // ─ Contrôles ──────────────────────────────────────────────────────────────────
 
 function keyPressed() {
-    if (key === 'p' || key === 'P') setMode('play');
-    else if (key === 't' || key === 'T') setMode('train');
-    else if (key === 'd' || key === 'D') setMode('demo');
-    else if (key === 'r' || key === 'R') {
+    // Empêcher le scroll de la page sur espace/flèches
+    if ([' ', 'ArrowUp', 'ArrowDown'].includes(key)) return false;
+    if (key === 'r' || key === 'R') {
         if (mode === 'play' && state === 'over') resetHumanGame();
         else if (mode === 'demo' && demoAgent && !demoAgent.alive) {
             _resetShared();

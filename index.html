@@ -36,7 +36,7 @@
                 <h3>Configuration réseau</h3>
 
                 <label>Population &nbsp;<span id="val-pop">50</span></label>
-                <input type="range" id="sl-pop" min="10" max="200" value="50" step="10">
+                <input type="range" id="sl-pop" min="1" max="50" value="10" step="1">
 
                 <label>Entrées capteurs &nbsp;<span id="val-inputs">6</span></label>
                 <input type="range" id="sl-inputs" min="2" max="8" value="6" step="1">
@@ -86,15 +86,8 @@
 
     <!-- p5.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.2/p5.min.js"></script>
-    <!-- ML5.js v1 (inclut TF.js) -->
-    <script src="https://unpkg.com/ml5@1/dist/ml5.min.js"></script>
-    <!-- Forcer le backend WebGL : ML5 enregistre WebGPU (async) comme priorité max,
-         ce qui provoque une erreur si on essaie de créer des tenseurs avant son init. -->
-    <script>
-        window.tf = ml5.tf;
-        try { tf.removeBackend('webgpu'); } catch (e) { }
-        tf.setBackend('webgl');
-    </script>
+    <!-- TensorFlow.js directement (évite l'indirection ml5.tf non-synchrone) -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js"></script>
 
     <!-- Modules du jeu (ordre de chargement important) -->
     <script src="nn.js"></script>

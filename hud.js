@@ -15,7 +15,10 @@ function drawHud() {
         fill(255, 255, 170, a);
         textAlign(CENTER, BOTTOM);
         textSize(13);
-        text('[ ESPACE ] ou [ CLIC MAINTENU ] pour voler', W / 2, H - 12);
+        const hint = canvasFocused
+            ? '[ ESPACE ] ou [ CLIC MAINTENU ] pour voler'
+            : '⚠ Cliquez sur le jeu pour activer les contrôles';
+        text(hint, W / 2, H - 12);
     }
     textAlign(LEFT, BASELINE);
 }
@@ -26,15 +29,17 @@ function drawTrainHud(evo) {
     const total = evo.agents.length;
     noStroke();
     fill(0, 0, 0, 110);
-    rect(0, 0, 220, 82, 0, 0, 8, 0);
+    rect(0, 0, 220, 100, 0, 0, 8, 0);
     fill(255, 255, 255, 220);
     textSize(13);
     textAlign(LEFT, TOP);
     text(`Génération : ${evo.generation}`, 10, 8);
     text(`Vivants    : ${alive} / ${total}`, 10, 26);
     text(`Score      : ${score}`, 10, 44);
+    fill(170, 215, 255, 200);
+    text(`Vitesse    : ${speed.toFixed(1)}`, 10, 62);
     fill(255, 200, 80);
-    text(`Meilleur F : ${Math.floor(evo.bestFitness)}`, 10, 62);
+    text(`Meilleur F : ${Math.floor(evo.bestFitness)}`, 10, 80);
     // Barre de progression condition d'arrêt
     const pct = evo.stopRatio(uiConfig);
     fill(40, 40, 60, 180);

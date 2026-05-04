@@ -144,12 +144,13 @@ function _updateActionBtns() {
 
 // ── Sauvegarde / chargement de cerveaux (localStorage) ───────────────────────
 
-function saveBestBrain() {
+function saveBestBrain(auto = false) {
     if (!evolution || !evolution.bestBrain) {
-        alert('Aucun cerveau entraîné disponible. Lancez d\'abord l\'entraînement.');
+        if (!auto) alert('Aucun cerveau entraîné disponible. Lancez d\'abord l\'entraînement.');
         return;
     }
-    const name = `G${evolution.generation} | F${Math.floor(evolution.bestFitness)} | Inputs:${uiConfig.inputCount}`;
+    const prefix = auto ? '★ Auto' : '';
+    const name = `${prefix} G${evolution.generation} | F${Math.floor(evolution.bestFitness)} | Inputs:${uiConfig.inputCount}`.trim();
     const key = 'brain_' + Date.now();
     const entry = {
         name,
