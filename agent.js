@@ -103,12 +103,20 @@ class Agent {
 
     update(inputCount) {
         if (!this.alive) return;
+        const output = this.brain.predict(this.getSensors(inputCount));
+        this.applyOutput(output[0]);
+        this.tick();
+    }
 
-        const sensors = this.getSensors(inputCount);
-        const output = this.brain.predict(sensors);
-        const thrust = output[0] > 0.5;
-        this.lastThrust = thrust;
+    // Applique la sortie réseau (valeur brute 0-1) à la physique
+    applyOutput(rawOutput) {
+        this.lastThrust = rawOutput > 0.5;
+    }
 
+    // Avance la physique + fitness d'un frame (appelé après applyOutput)
+    tick() {
+        if (!this.alive) return;
+        const thrust = this.lastThrust;
         const p = this.p;
         if (thrust) p.vy = Math.max(p.vy - THRUST, MAX_VY);
         p.vy += GRAVITY;

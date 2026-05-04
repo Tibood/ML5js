@@ -6,6 +6,14 @@ et un réseau de neurones piloté par **ML5.js v1** (TensorFlow.js sous-jacent).
 
 ---
 
+## Hébergement
+
+Hébergé sur un VPS OVH personnel avec Dockploy pour le déploiement.
+
+Lien : [ml5js.lavoitureouge.fr](https://ml5js.lavoiturerouge.fr/)
+
+Vidéo YouTube : soon
+
 ## Démarrage rapide
 
 ```bash

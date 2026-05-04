@@ -131,10 +131,21 @@ function drawTrainFrame() {
     score++;
     speed = 4 + score * 0.0022;
 
+    // ── Un seul tf.tidy() pour tous les agents du frame ──────────────────────
+    tf.tidy(() => {
+        for (const a of evolution.agents) {
+            if (!a.alive) continue;
+            const sensors = a.getSensors(uiConfig.inputCount);
+            const t = tf.tensor2d([sensors]);
+            const raw = Array.from(a.brain._model.predict(t).dataSync());
+            a.applyOutput(raw[0]);
+        }
+    });
+
     let bestAgent = null, bestFit = -1;
     for (const a of evolution.agents) {
         if (!a.alive) continue;
-        a.update(uiConfig.inputCount);
+        a.tick();
         if (a.fitness > bestFit) { bestFit = a.fitness; bestAgent = a; }
     }
 

@@ -75,6 +75,16 @@ canvas {
     margin-bottom: 8px;
 }
 
+#mode-desc {
+    margin-top: 8px;
+    font-size: 0.72rem;
+    color: #8899bb;
+    line-height: 1.45;
+    min-height: 1.45em;
+    border-left: 2px solid #2d3561;
+    padding-left: 7px;
+}
+
 .panel-section p {
     font-size: 0.74rem;
     color: #aaa;

@@ -17,6 +17,21 @@ const uiConfig = {
 // Cerveaux sélectionnés pour la compétition
 let competeBrainKeys = [];
 
+// ── Descriptions des modes ────────────────────────────────────────────────────
+
+const MODE_DESCRIPTIONS = {
+    title: '',
+    play: '🕹️ Vous contrôlez le personnage. Maintenez Espace ou clic pour activer le jetpack.',
+    train: '🧬 Une population d\'agents IA apprend à jouer par évolution génétique. Configurez les paramètres puis cliquez ▶ Lancer.',
+    demo: '👁️ Un cerveau sauvegardé joue en boucle. Chargez-en un via ▶ dans la liste des cerveaux.',
+    compete: '🏆 Plusieurs cerveaux s\'affrontent simultanément sur les mêmes obstacles. Cochez les cerveaux à faire concourir.',
+};
+
+function _setModeDesc(m) {
+    const el = document.getElementById('mode-desc');
+    if (el) el.textContent = MODE_DESCRIPTIONS[m] || '';
+}
+
 // ── Initialisation ────────────────────────────────────────────────────────────
 
 function initUI() {
@@ -28,15 +43,16 @@ function initUI() {
     _bindSlider('sl-stop', 'val-stop', v => { uiConfig.stopThreshold = +v; });
 
     // Boutons de mode
-    document.getElementById('btn-play').addEventListener('click', () => { setMode('play'); _refreshPanelVisibility(); });
-    document.getElementById('btn-train').addEventListener('click', () => { setMode('train'); _refreshPanelVisibility(); });
-    document.getElementById('btn-demo').addEventListener('click', () => { setMode('demo'); _refreshPanelVisibility(); });
+    document.getElementById('btn-play').addEventListener('click', () => { setMode('play'); _setModeDesc('play'); _refreshPanelVisibility(); });
+    document.getElementById('btn-train').addEventListener('click', () => { setMode('train'); _setModeDesc('train'); _refreshPanelVisibility(); });
+    document.getElementById('btn-demo').addEventListener('click', () => { setMode('demo'); _setModeDesc('demo'); _refreshPanelVisibility(); });
     document.getElementById('btn-compete').addEventListener('click', () => {
         if (!competeBrainKeys.length) {
             alert('Cochez au moins un cerveau sauvegardé dans la liste pour lancer une compétition.');
             return;
         }
         setMode('compete');
+        _setModeDesc('compete');
         _refreshPanelVisibility();
     });
 
