@@ -161,6 +161,118 @@ class Agent {
         this.fitness = score + Math.floor(this.bonusPassed) * 150;
     }
 
+    // ── Visualisation des capteurs ────────────────────────────────────────────
+
+    drawSensors(inputCount) {
+        if (!this.alive) return;
+        const p = this.p;
+
+        // Reconstruit les groupes d'obstacles (même logique que getSensors)
+        const ahead = obstacles
+            .filter(o => o.x + o.w > p.x)
+            .sort((a, b) => a.x - b.x);
+
+        function nextGroup(skip) {
+            const seen = new Set();
+            let cnt = 0;
+            for (const o of ahead) {
+                const key = Math.round(o.x / 10);
+                if (seen.has(key)) continue;
+                seen.add(key);
+                if (cnt++ < skip) continue;
+                return ahead.filter(a => Math.abs(a.x - o.x) < 10);
+            }
+            return null;
+        }
+
+        push();
+
+        // ── 1. Indicateur de vitesse verticale (capteur #1) ───────────────────
+        const vy = Math.max(-1, Math.min(1, p.vy / 10));
+        const arrowLen = vy * 36;
+        const ax = p.x - 16;
+        const ay = p.y + p.h / 2;
+        strokeWeight(2);
+        stroke(255, 220, 50, 220);
+        line(ax, ay, ax, ay + arrowLen);
+        const dir = arrowLen >= 0 ? 1 : -1;
+        fill(255, 220, 50, 220);
+        noStroke();
+        triangle(ax - 4, ay + arrowLen - dir * 6,
+                 ax + 4, ay + arrowLen - dir * 6,
+                 ax,     ay + arrowLen);
+
+        // ── 2. Rayon + passage vers le 1er obstacle (capteurs #2, #3, #4, #5) ─
+        const g1 = nextGroup(0);
+        if (g1 && g1.length > 0) {
+            const ref = g1[0];
+            const rayY = p.y + p.h * 0.4;
+
+            // Rayon horizontal jusqu'à l'obstacle
+            stroke(0, 220, 255, 190);
+            strokeWeight(1.5);
+            drawingContext.setLineDash([7, 5]);
+            line(p.x + p.w, rayY, ref.x, rayY);
+            drawingContext.setLineDash([]);
+
+            // Trait vertical sur le bord de l'obstacle
+            stroke(0, 220, 255, 255);
+            strokeWeight(2);
+            line(ref.x, rayY - 7, ref.x, rayY + 7);
+
+            if (ref.type === 'wall') {
+                // Calcul du passage libre
+                const topWall = g1.find(a => a.y <= 1) || null;
+                const botWall = g1.find(a => a.y > 1) || null;
+                const gapTop = topWall ? topWall.y + topWall.h : 0;
+                const gapBot = botWall ? botWall.y : GROUND;
+
+                // Zone verte semi-transparente dans la brèche
+                noStroke();
+                fill(0, 255, 100, 50);
+                rect(ref.x, gapTop, ref.w, gapBot - gapTop);
+
+                // Lignes pointillées du joueur vers le bord du passage
+                stroke(0, 255, 100, 200);
+                strokeWeight(1.5);
+                drawingContext.setLineDash([4, 3]);
+                line(p.x + p.w, gapTop, ref.x, gapTop);
+                line(p.x + p.w, gapBot, ref.x, gapBot);
+                drawingContext.setLineDash([]);
+
+                // Lignes pleines sur la colonne du mur
+                strokeWeight(2);
+                line(ref.x, gapTop, ref.x + ref.w, gapTop);
+                line(ref.x, gapBot, ref.x + ref.w, gapBot);
+            } else {
+                // Trou : marquer les bords
+                stroke(255, 160, 0, 200);
+                strokeWeight(2);
+                line(ref.x, GROUND - 12, ref.x, GROUND + 18);
+                line(ref.x + ref.w, GROUND - 12, ref.x + ref.w, GROUND + 18);
+            }
+        }
+
+        // ── 3. Rayon vers le 2e obstacle (capteur #6, si ≥ 7 entrées) ─────────
+        if (inputCount >= 7) {
+            const g2 = nextGroup(1);
+            if (g2 && g2.length > 0) {
+                const ref2 = g2[0];
+                const rayY2 = p.y + p.h * 0.6;
+                stroke(180, 100, 255, 100);
+                strokeWeight(1);
+                drawingContext.setLineDash([4, 6]);
+                line(p.x + p.w, rayY2, ref2.x, rayY2);
+                drawingContext.setLineDash([]);
+                stroke(180, 100, 255, 150);
+                strokeWeight(1.5);
+                line(ref2.x, rayY2 - 5, ref2.x, rayY2 + 5);
+            }
+        }
+
+        pop();
+    }
+
     // ── Dessin ────────────────────────────────────────────────────────────────
 
     draw(isBest) {

@@ -154,6 +154,7 @@ function drawTrainFrame() {
     for (const o of obstacles) drawObstacle(o);
     drawGround();
     for (const a of evolution.agents) a.draw(a === bestAgent);
+    if (uiConfig.showSensors && bestAgent) bestAgent.drawSensors(uiConfig.inputCount);
     drawTrainHud(evolution);
 }
 
@@ -182,6 +183,7 @@ function drawDemoFrame() {
     drawGround();
     for (const pt of particles) drawParticle(pt);
     drawPlayer(demoAgent.lastThrust, demoAgent.p);
+    if (uiConfig.showSensors) demoAgent.drawSensors(uiConfig.inputCount);
     drawHud();
 }
 

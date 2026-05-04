@@ -12,6 +12,7 @@ const uiConfig = {
     hiddenSize: 8,
     mutationRate: 10,    // en %
     stopThreshold: 2000,  // fitness minimale pour la condition d'arrêt
+    showSensors: false,
 };
 
 // Cerveaux sélectionnés pour la compétition
@@ -55,6 +56,10 @@ function initUI() {
         _setModeDesc('compete');
         _refreshPanelVisibility();
     });
+
+    // Toggle capteurs
+    const chkSensors = document.getElementById('chk-sensors');
+    if (chkSensors) chkSensors.addEventListener('change', () => { uiConfig.showSensors = chkSensors.checked; });
 
     // Boutons d'entraînement
     document.getElementById('btn-start-train').addEventListener('click', startTraining);

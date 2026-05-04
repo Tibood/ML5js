@@ -2,7 +2,7 @@
 
 Jeu de runner infini style **Jetpack Joyride** avec un système d'IA entraînable
 par **algorithme génétique** (neuro-évolution). Développé avec **p5.js 1.11.2**
-et un réseau de neurones piloté par **ML5.js v1** (TensorFlow.js sous-jacent).
+et un réseau de neurones piloté par **ML5.js**
 
 ---
 
@@ -12,14 +12,8 @@ Hébergé sur un VPS OVH personnel avec Dockploy pour le déploiement.
 
 Lien : [ml5js.lavoitureouge.fr](https://ml5js.lavoiturerouge.fr/)
 
-Vidéo YouTube : soon
+Vidéo YouTube :
 
-## Démarrage rapide
-
-```bash
-python3 -m http.server 3333
-# Puis ouvrez http://localhost:3333
-```
 
 ---
 
