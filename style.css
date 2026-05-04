@@ -18,6 +18,7 @@ body {
     justify-content: center;
     gap: 18px;
     padding: 18px;
+    flex-wrap: wrap;
 }
 
 #game-area {
@@ -37,12 +38,15 @@ canvas {
     border: 2px solid #a8dadc;
     border-radius: 8px;
     display: block;
+    max-width: 100%;
+    height: auto !important;
 }
 
 /* ── Panneau latéral ─────────────────────────────────────────────────── */
 
 #control-panel {
     width: 265px;
+    max-width: 265px;
     background: #16213e;
     border: 1px solid #2d3561;
     border-radius: 10px;
@@ -236,4 +240,55 @@ button.active {
     font-size: 0.68rem;
     margin-top: 0;
     flex-shrink: 0;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+
+/* Tablette : le canvas se rétrécit, le panneau garde sa largeur */
+@media (max-width: 1150px) {
+    #app {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 12px;
+    }
+
+    #game-area {
+        width: 100%;
+    }
+
+    #canvas-container {
+        width: 100%;
+    }
+
+    #control-panel {
+        width: 100% !important;
+        max-width: 100% !important;
+        max-height: none;
+        flex: 1;
+    }
+}
+
+/* Mobile : mise en page verticale compacte */
+@media (max-width: 600px) {
+    #app {
+        padding: 8px;
+        gap: 10px;
+    }
+
+    #game-area h1 {
+        font-size: 1rem;
+    }
+
+    #control-panel {
+        padding: 10px 12px;
+    }
+
+    .btn-group button {
+        font-size: 0.65rem;
+        padding: 4px 2px;
+    }
+
+    #stats {
+        font-size: 0.72rem;
+    }
 }

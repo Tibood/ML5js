@@ -237,6 +237,10 @@ async function startTraining() {
     // S'assurer que TF.js est prêt (WebGL de préférence, fallback CPU)
     await tf.setBackend('webgl').catch(() => tf.setBackend('cpu'));
     await tf.ready();
+    // Warmup : force la compilation des shaders WebGL avant le 1er frame
+    const _warmupNN = new NeuralNetwork(buildTopology(uiConfig));
+    tf.tidy(() => _warmupNN._model.predict(tf.zeros([1, uiConfig.inputCount])));
+    _warmupNN._model.dispose();
     if (!evolution) evolution = new Evolution();
     evolution.init(uiConfig);
     trainingActive = true;
@@ -249,6 +253,11 @@ function resetTraining() {
     trainingActive = false;
     evolution = new Evolution();
     _resetShared();
+    updateStats();
+}
+
+function stopTraining() {
+    trainingActive = false;
     updateStats();
 }
 

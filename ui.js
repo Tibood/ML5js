@@ -39,7 +39,7 @@ function initUI() {
     _bindSlider('sl-pop', 'val-pop', v => { uiConfig.popSize = +v; });
     _bindSlider('sl-inputs', 'val-inputs', v => { uiConfig.inputCount = +v; });
     _bindSlider('sl-neurons', 'val-neurons', v => { uiConfig.hiddenSize = +v; });
-    _bindSlider('sl-mutation', 'val-mutation', v => { uiConfig.mutationRate = +v; }, '%');
+    _bindSlider('sl-mutation', 'val-mutation', v => { uiConfig.mutationRate = +v; });
     _bindSlider('sl-stop', 'val-stop', v => { uiConfig.stopThreshold = +v; });
 
     // Boutons de mode
@@ -58,7 +58,7 @@ function initUI() {
 
     // Boutons d'entraînement
     document.getElementById('btn-start-train').addEventListener('click', startTraining);
-    document.getElementById('btn-reset-train').addEventListener('click', resetTraining);
+    document.getElementById('btn-stop-train').addEventListener('click', stopTraining);
 
     // Sauvegarde
     document.getElementById('btn-save-brain').addEventListener('click', saveBestBrain);
