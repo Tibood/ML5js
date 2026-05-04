@@ -128,10 +128,11 @@ fitness = frames_franchies + obstacles_franchis × 150
 [inputCount]  →  [hiddenSize] × 1 couche  →  [1 sortie]
 ```
 
-> ML5.js v1 ne supporte qu’une seule couche cachée via `hiddenUnits`.
-> La manipulation des poids (mutation, croisement) passe par le modèle
-> TensorFlow.js sous-jacent via `nn.model.getWeights()` / `setWeights()`.
-> Activation cachée : **relu** (défaut ML5). Sortie : **sigmoid** (appliquée manuellement).
+> Le réseau est créé via `ml5.neuralNetwork()` (task: regression, noTraining: true),
+> qui génère le modèle TF.js synchroniquement. La manipulation des poids
+> (mutation, croisement) s'appuie sur les méthodes néuro-évolutives natives de ML5 :
+> `nn.mutate()` et `nn.neuralNetwork.crossover()` (via l'instance TF.js interne).
+> Activation cachée : **relu**. Sortie : **sigmoid**.
 
 | # | Capteur | Plage |
 |---|---------|-------|

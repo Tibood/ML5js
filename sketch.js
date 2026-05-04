@@ -86,10 +86,6 @@ function drawTitle() {
     fill(170, 215, 255);
     textSize(17);
     text('IA Neuro-évolutive', W / 2, H / 2 - 25);
-    fill(190, 190, 200);
-    textSize(13);
-    text('Choisissez un mode dans le panneau →', W / 2, H / 2 + 20);
-    text('[ P ] Jouer   [ T ] Entraîner   [ D ] Démo', W / 2, H / 2 + 46);
     textAlign(LEFT, BASELINE);
 }
 

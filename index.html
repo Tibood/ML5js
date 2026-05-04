@@ -86,8 +86,9 @@
 
     <!-- p5.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.2/p5.min.js"></script>
-    <!-- TensorFlow.js directement (évite l'indirection ml5.tf non-synchrone) -->
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js"></script>
+    <!-- ML5.js v1 (inclut TensorFlow.js — expose ml5.tf comme global tf) -->
+    <script src="https://unpkg.com/ml5@1/dist/ml5.js"></script>
+    <script>window.tf = ml5.tf;</script>
 
     <!-- Modules du jeu (ordre de chargement important) -->
     <script src="nn.js"></script>

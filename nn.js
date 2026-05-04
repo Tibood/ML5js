@@ -1,45 +1,42 @@
-// ── nn.js — Réseau de neurones via TF.js (bundlé dans ML5.js v1) ─────────────
+// ── nn.js — Réseau de neurones via ML5.js v1 (neuralNetwork) ─────────────────
 //
 // API publique : predict(), copy(), mutate(), crossover(), serialize(), deserialize()
 //
-// TF.js est exposé via window.tf = ml5.tf (défini dans index.html).
-// On utilise tf.sequential() directement, sans passer par ml5.neuralNetwork(),
-// afin d'éviter les problèmes d'initialisation asynchrone de ML5.
+// Le réseau est créé via ml5.neuralNetwork() avec l'option noTraining:true,
+// ce qui déclenche une initialisation synchrone du modèle TF.js sous-jacent.
+// Les opérations génétiques (mutation, croisement) s'appuient sur les méthodes
+// natives ml5 : nn.mutate() et nn.crossover().
+// Le modèle TF.js est accessible via _ml5nn.neuralNetwork.model pour
+// l'inférence rapide (predictFast) et la (dé)sérialisation des poids.
 //
-// Architecture : [inputs → dense(relu) → dense(sigmoid, 1 sortie)]
+// Architecture : [inputs → dense(relu, hiddenUnits) → dense(sigmoid, 1 sortie)]
 // Nota : tf.ready() doit être attendu AVANT de créer le premier NeuralNetwork.
 
 class NeuralNetwork {
     /**
      * @param {number[]} topology  - [inputs, hiddenSize, 1]
-     * @param {string}   activation - conservé pour sérialisation (relu/sigmoid implicites)
+     * @param {string}   activation - conservé pour sérialisation
      */
     constructor(topology, activation = 'sigmoid') {
         this.topology = topology.slice();
         this.activation = activation;
-        this._model = this._buildModel();
+        const inputSize = topology[0];
+        const hiddenSize = topology.length > 2 ? topology[1] : 8;
+
+        // Création via ML5.js : noTraining:true = initialisation synchrone
+        // En ML5 v1.3.1, createLayersNoTraining() doit être appelé explicitement
+        this._ml5nn = ml5.neuralNetwork({
+            inputs: inputSize,
+            outputs: 1,
+            task: 'regression',
+            hiddenUnits: hiddenSize,
+            noTraining: true,
+        });
+        this._ml5nn.createLayersNoTraining(); // construit le modèle TF.js synchroniquement
+
+        // Modèle TF.js sous-jacent (couches déjà construites par ML5)
+        this._model = this._ml5nn.neuralNetwork.model;
         this._syncCache(); // cache JS des poids pour le forward-pass rapide
-    }
-
-    _buildModel() {
-        const inputSize = this.topology[0];
-        const hiddenSize = this.topology.length > 2 ? this.topology[1] : 8;
-
-        const model = tf.sequential();
-        model.add(tf.layers.dense({
-            units: hiddenSize,
-            inputShape: [inputSize],
-            activation: 'relu',
-            kernelInitializer: 'glorotUniform',
-            biasInitializer: 'zeros',
-        }));
-        model.add(tf.layers.dense({
-            units: 1,
-            activation: 'sigmoid',
-            kernelInitializer: 'glorotUniform',
-            biasInitializer: 'zeros',
-        }));
-        return model;
     }
 
     // ── Inférence synchrone ───────────────────────────────────────────────────
@@ -102,35 +99,25 @@ class NeuralNetwork {
         return nn;
     }
 
-    // ── Mutation gaussienne sur place ─────────────────────────────────────────
+    // ── Mutation gaussienne via ml5.mutate() ──────────────────────────────────
 
     mutate(rate = 0.1, magnitude = 0.3) {
-        const arr = this._weightsToArrays();
-        const mutated = arr.map(({ shape, data }) => ({
-            shape,
-            data: data.map(v => {
-                if (Math.random() < rate) {
-                    const noise = (Math.random() + Math.random() + Math.random() - 1.5) * magnitude;
-                    return Math.max(-6, Math.min(6, v + noise));
-                }
-                return v;
-            }),
-        }));
-        this._setWeightsFromArrays(mutated);
+        // Délègue à ML5 qui applique la fonction de mutation sur chaque poids
+        this._ml5nn.mutate(rate, v => {
+            const noise = (Math.random() + Math.random() + Math.random() - 1.5) * magnitude;
+            return Math.max(-6, Math.min(6, v + noise));
+        });
+        this._syncCache(); // rafraîchit le cache JS après mutation
         return this;
     }
 
-    // ── Croisement uniforme ───────────────────────────────────────────────────
+    // ── Croisement uniforme via ml5.neuralNetwork.crossover() ─────────────────
 
     crossover(other) {
-        const child = new NeuralNetwork(this.topology, this.activation);
-        const wA = this._weightsToArrays();
-        const wB = other._weightsToArrays();
-        const wC = wA.map(({ shape, data }, i) => ({
-            shape,
-            data: data.map((v, j) => Math.random() < 0.5 ? v : wB[i].data[j]),
-        }));
-        child._setWeightsFromArrays(wC);
+        const child = this.copy(); // copie fidèle de this (notre copy(), pas celle de ML5)
+        // Applique le croisement uniforme 50/50 via la méthode interne ML5
+        child._ml5nn.neuralNetwork.crossover(other._ml5nn.neuralNetwork);
+        child._syncCache(); // rafraîchit le cache JS après croisement
         return child;
     }
 
